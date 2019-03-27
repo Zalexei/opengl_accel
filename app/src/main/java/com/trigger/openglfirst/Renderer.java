@@ -9,17 +9,14 @@ import org.rajawali3d.materials.Material;
 import org.rajawali3d.materials.methods.DiffuseMethod;
 import org.rajawali3d.materials.textures.ATexture;
 import org.rajawali3d.materials.textures.Texture;
-import org.rajawali3d.math.Quaternion;
-import org.rajawali3d.math.vector.Vector3;
 import org.rajawali3d.primitives.RectangularPrism;
-import org.rajawali3d.primitives.Sphere;
 import org.rajawali3d.renderer.RajawaliRenderer;
 
 public class Renderer extends RajawaliRenderer {
     private Context context;
 
     private DirectionalLight directionalLight;
-    public RectangularPrism earthSphere;
+    public RectangularPrism pcbBox;
 
     public Renderer(Context context) {
         super(context);
@@ -32,7 +29,7 @@ public class Renderer extends RajawaliRenderer {
     }
 
     @Override
-    protected void initScene() {
+    public void initScene() {
         getCurrentScene().setBackgroundColor(0xffffff);
 
         directionalLight = new DirectionalLight(1f, .2f, -1.0f);
@@ -40,33 +37,40 @@ public class Renderer extends RajawaliRenderer {
         directionalLight.setPower(2);
         getCurrentScene().addLight(directionalLight);
 
+        createModel();
+
+        //getCurrentCamera().setZ(4.2f);
+        getCurrentCamera().setZ(3.2f);
+        getCurrentCamera().setY(0.5f);
+    }
+
+    public void createModel() {
+        getCurrentScene().clearChildren();
+
         Material material = new Material();
         material.enableLighting(true);
         material.setDiffuseMethod(new DiffuseMethod.Lambert());
         material.setColor(0);
 
-        Texture earthTexture = new Texture("Earth", R.drawable.edu);
+        Texture pcbTexture = new Texture("PCB", R.drawable.pcb);
         try{
-            material.addTexture(earthTexture);
+            material.addTexture(pcbTexture);
 
         } catch (ATexture.TextureException error){
             Log.d("DEBUG", "TEXTURE ERROR");
         }
 
-        earthSphere = new RectangularPrism(1f, 0.1f, 0.75f);
-        earthSphere.setMaterial(material);
-        getCurrentScene().addChild(earthSphere);
-        //getCurrentCamera().setZ(4.2f);
-        getCurrentCamera().setZ(5.2f);
-        getCurrentCamera().setY(0.5f);
+        pcbBox = new RectangularPrism(1f, 0.1f, 0.75f);
+        pcbBox.setMaterial(material);
+        getCurrentScene().addChild(pcbBox);
     }
 
     @Override
     protected void onRender(long ellapsedRealtime, double deltaTime) {
         super.onRender(ellapsedRealtime, deltaTime);
 
-//        earthSphere.rotate(Vector3.Axis.Y, 1.0);
-//        earthSphere.moveRight(0.01);
+//        pcbBox.rotate(Vector3.Axis.Y, 1.0);
+//        pcbBox.moveRight(0.01);
     }
 
     @Override
